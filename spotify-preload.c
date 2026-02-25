@@ -8,6 +8,7 @@
 
 static const char *ICON_NAME_OVERRIDE = "com.spotify.Client-symbolic";
 
+/* Electron currently uses app_indicator_set_icon_full() but this covers all options in-case. */
 static void (*original_set_icon_full)(void *, const char *, const char *);
 static void (*original_set_icon)(void *, const char *);
 static void* (*original_indicator_new)(const char *, const char *, int);
@@ -34,7 +35,7 @@ static void resolve_symbols(void) {
         !original_indicator_new ||
         !original_indicator_new_with_path)
     {
-        fprintf(stderr,"[spotify-icon-override] failed to resolve symbols\n");
+        fprintf(stderr, "[spotify-icon-override] failed to resolve symbols\n");
         abort();
     }
 }
@@ -53,7 +54,6 @@ void *app_indicator_new(const char *id, const char *icon_name, int category) {
 void *app_indicator_new_with_path(const char *id, const char *icon_name, int category, const char *icon_theme_path) {
     ensure_resolved();
 
-    /* preserve theme path instead of forcing NULL */
     return original_indicator_new_with_path(id, ICON_NAME_OVERRIDE, category, icon_theme_path);
 }
 
